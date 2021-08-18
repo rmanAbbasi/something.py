@@ -1,26 +1,36 @@
-from pyrogram import Client, filters
-from pyrogram.types import Message
+import time
+import schedule
+import cv2
+import random
+from pyrogram import Client
 from pyrogram.raw import functions
+from datetime import datetime
 
-app = Client('myapp', config_file='config.ini')
+app = Client(
+	'myapp',
+	api_id=,
+	api_hash='f3804f0880757bb29d9c5a510f57131d')
 
-user_list = []
-@app.on_message(filters.text)
-def test(client, m:Message):
-	usertext = m.text
-	user_list = []
-	try:
-		app.join_chat(usertext)
-		print('Joined')
-	except:
-		print('Error joining the group')
-	for i in app.iter_chat_members(usertext):
-		user_list.append(i.user.id)
-	app.send(
-		functions.channels.InviteToChannel(
-			channel = app.resolve_peer("@channel_pythontest"),
-			users=[app.resolve_peer(j) for j in user_list]
-		)
-	)
-	print('END!')
-app.run()
+
+def job():
+    now_h = datetime.now().strftime('%H')
+    now_m = datetime.now().strftime('%M')
+    image = cv2.imread('download.png')
+    cv2.putText(image, f'{now_h}:{now_m}', (150, 280),
+    cv2.FONT_HERSHEY_SIMPLEX, 5, (0, 255, 0), 5)
+    n = random.randint(0, 100000000000000000)
+    cv2.imwrite(f"pic/picfile_{n}.png", image)
+    with app:
+        app.send(
+            functions.account.UpdateProfile(
+                about=f"{now_h}:{now_m}"
+            )
+        )
+        app.set_profile_photo(photo=f'pic/picfile_{n}.png')
+        print('Changed !')
+
+
+schedule.every().minute.do(job)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
