@@ -8,8 +8,9 @@ from datetime import datetime
 
 app = Client(
 	'myapp',
-	api_id=,
-	api_hash='f3804f0880757bb29d9c5a510f57131d')
+	api_id=7918017,
+	api_hash='f3804f0880757bb29d9c5a510f57131d'
+)
 
 
 def job():
